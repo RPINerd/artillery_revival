@@ -1,7 +1,9 @@
 [project]
 name = "artillery-revival"
-version = "0.6.1"
-description = "Verison 0.61 of Artillery Duel Reloaded"
+version = "0.6.2"
+description = "A remake of the classic game 'Artillery Duel' for C64"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pygame>=2.6.1",
+]
