@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-import pygame, time
-from load_save import load_sound
+import time
+
+from .load_save import load_sound
 
 
-class Sound(object):
-    """ Sound Mixer """
+class Sound:
+
+    """Sound Mixer"""
+
     def __init__(self):
         self.sounds = {}
         self.sounds["gun"] = load_sound('gun.ogg')
@@ -22,7 +25,6 @@ class Sound(object):
         sound = self.sounds[key]
         if key != "powder":
             sound.play()
-        else:
-            if (time.time() - self.powder_sound_timer) > 0.55:
-                self.powder_sound_timer = time.time()
-                sound.play()
+        elif (time.time() - self.powder_sound_timer) > 0.55:
+            self.powder_sound_timer = time.time()
+            sound.play()
