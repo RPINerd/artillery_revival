@@ -114,10 +114,13 @@ class Game(object):
             self.sprites.clear(self.screen, self.background)
 
     def draw_update_ground(self):
-        draw_ground(self)
+        if (time.time() - self.update_ground_timer) > 0.5:
+            self.background = update_screen(self)
         self.sprites.update(self)
         rectlist = self.sprites.draw(self.screen)
-        rectlist.append(self.ground_rect)
+        if (time.time() - self.update_ground_timer) > 0.5:
+            rectlist.append(self.ground_rect)
+            self.update_ground_timer = time.time()
         return rectlist
 
     def eventCheckMenu(self):
@@ -193,6 +196,7 @@ class Game(object):
         self.start_game = False
         self.game_started = True
         self.check_damage = False
+        self.update_ground_timer = time.time()
         if random.randint(0,1) == 0:
             self.turn = "left"
         else:
@@ -302,8 +306,8 @@ class Game(object):
         draw_ground(self)
         score1 = self.font.render("SCORE : "+str(self.score[0]), True, (0,0,0))
         score2 = self.font.render("SCORE : "+str(self.score[1]), True, (0,0,0))
-        self.screen.blit(score1, (125,90))
-        self.screen.blit(score2, (535,90))
+        self.screen.blit(score1, (110,90))
+        self.screen.blit(score2, (550,90))
         pygame.display.update()
         self.background = self.screen.copy()
             

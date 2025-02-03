@@ -53,7 +53,7 @@ def explosion(exp_x, exp_y, Game):
     Game.sprites.add(particles)
     Game.sprites.add(Smoke(exp_x, exp_y, Game, True, "ground"))
     Game.sprites.add(Smoke(exp_x, exp_y, Game, False, "ground"))
-    flare(exp_x, exp_y, Game) 
+    #flare(exp_x, exp_y, Game) 
     Game.background = update_screen(Game)
 
 
@@ -206,13 +206,15 @@ class Smoke(pygame.sprite.Sprite):
             Game.sprites.remove(self)
 
 
-def flare(x, y, Game):                    
+def flare(x, y, Game):
+    ## Currently disabled
     image = load_image('flare.png', 'sprites/effects', (0,0,0))
     rect = image.get_rect(center = (x, y))
     for tank in Game.tanks:
         Game.screen.blit(tank.image, tank.rect)
     Game.screen.blit(image, rect, None, BLEND_RGB_ADD)
     pygame.display.update(rect)
+
 
 
 def gravity(speed_y, weight):

@@ -48,10 +48,10 @@ def new_ground():
     return ground, max_height
 
 
-def draw_ground(Game, start=0, end=800):
+def draw_ground(Game):   
     surface = Game.screen
     ground = Game.ground
-    for i in range(start,end):
+    for i in range(0,800):
         pygame.draw.line(surface, (255, 255, 120), (i, 600-ground[i]), (i, 599))
         pygame.draw.line(surface, (140, 140, 50), (i, 600-ground[i]), (i, 600-ground[i]+2))
         pygame.draw.line(surface, (200, 200, 80), (i, 600-ground[i]+3), (i, 600-ground[i]+6))
@@ -104,7 +104,7 @@ def update_screen(Game):
 
 
 def generate_trees(Game):
-    for y in range(Game.max_height-15, 0, -1):
+    for y in range(Game.max_height-15, 0, -2):
         while True:
             x = random.randint(0,799)
             if y < Game.ground[x]:

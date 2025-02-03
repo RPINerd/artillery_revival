@@ -1,6 +1,6 @@
 # Release info
 GAME_NAME = "Artillery Duel Reloaded"
-GAME_VER = "0.6"
+GAME_VER = "0.61"
 
 # Display options
 SCREEN_SIZE = (800,600)
