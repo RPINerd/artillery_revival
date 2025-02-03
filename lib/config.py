@@ -1,6 +1,6 @@
 # Release info
 GAME_NAME = "Artillery Duel Reloaded"
-GAME_VER = "0.5"
+GAME_VER = "0.6"
 
 # Display options
 SCREEN_SIZE = (800,600)
@@ -12,6 +12,8 @@ FRAME_SPEED = 45
 STATE_MENU = "Menu"
 STATE_INTRO = "Intro"
 STATE_GAME = "Game"
+STATE_DAMAGE = "Damage"
+STATE_END = "End"
 STATE_QUIT = "Quit"
 
 # Mouse

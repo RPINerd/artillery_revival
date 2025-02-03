@@ -1,7 +1,7 @@
 [project]
 name = "artillery-revival"
-version = "0.5.0"
-description = "Verison 0.5 of Artillery Duel Reloaded"
+version = "0.6.0"
+description = "Verison 0.6 of Artillery Duel Reloaded"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []

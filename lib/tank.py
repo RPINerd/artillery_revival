@@ -3,7 +3,6 @@
 import pygame, math
 from load_save import load_image
 from explosion import *
-#from control_panel import *
 
 class Tank(pygame.sprite.Sprite):
     """ The tank object """
@@ -15,6 +14,7 @@ class Tank(pygame.sprite.Sprite):
         self.position = position
         self.time_to_fire = 14
         self.damage = 0
+        self.damaged = False
 
         #self.intro_image = Tank.image.copy()
         #self.intro_image.blit(load_image('gun.png', 'sprites', -1), (38,4))
@@ -30,13 +30,6 @@ class Tank(pygame.sprite.Sprite):
 
     def update(self, Game):
         pass
-
-    def check_damage(self, Game):
-        if self.damage >= 100:
-            #for i in range(0,2):
-            #    Game.sprites.add(Smoke(self.rect.centerx, self.rect.centery, Game, True, "ground"))
-            #    Game.sprites.add(Smoke(self.rect.centerx, self.rect.centery, Game, False, "ground"))
-            Game.end_game(self)
 
     def stain_black(self, shell_x, shell_y):
         x = int(shell_x) - self.rect.left
@@ -56,7 +49,8 @@ class Tank(pygame.sprite.Sprite):
                     self.image.set_at((pixel_x, pixel_y), (int(color[0]*0.6),int(color[1]*0.6),int(color[2]*0.6)))
                     pixel_count += 1
         self.image.unlock()
-        return pixel_count
+        self.damage += int(pixel_count/10)
+        self.damaged = True
 
     def intro(self, x, ground):
         pass
@@ -83,8 +77,8 @@ class Gun(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, 1, 0)
         self.base_image = self.image
 
-    def turn(self, ajustment):
-        self.angle += ajustment
+    def turn(self, adjustment):
+        self.angle += adjustment
         if self.angle > 90:
             self.angle = 90
         elif self.angle < 0:
@@ -117,12 +111,12 @@ class Shell(pygame.sprite.Sprite):
         self.target = tank.ennemy
         if tank.position == "left":
             self.rect.center = tank.gun.rect.topright
-            self.speed_x = math.sin(math.radians(90-tank.gun.angle)) * (float(tank.gun.powder+5)/7)
-            self.speed_y = (0 - math.cos(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/7)
+            self.speed_x = math.sin(math.radians(90-tank.gun.angle)) * (float(tank.gun.powder+5)/9)
+            self.speed_y = (0 - math.cos(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/9)
         elif tank.position == "right":
             self.rect.center = tank.gun.rect.topleft
-            self.speed_x = (0 - math.sin(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/7)
-            self.speed_y = (0 - math.cos(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/7)
+            self.speed_x = (0 - math.sin(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/9)
+            self.speed_y = (0 - math.cos(math.radians(90-tank.gun.angle))) * (float(tank.gun.powder+5)/9)
         self.pos_x = self.rect.centerx
         self.pos_y = self.rect.centery
         self.weight = 55
@@ -131,11 +125,11 @@ class Shell(pygame.sprite.Sprite):
         self.pos_x += self.speed_x
         if (self.pos_x >= 779) or (self.pos_x <= 21):
             Game.sprites.remove(self)
-            Game.change_turn(self.from_tank)
+            Game.change_turn()
         self.pos_y += self.speed_y
         if (self.pos_y >= 590):
             Game.sprites.remove(self)
-            Game.change_turn(self.from_tank)
+            Game.change_turn()
         self.rect.centerx, self.rect.centery = int(self.pos_x), int(self.pos_y)
         self.speed_y = gravity(self.speed_y, self.weight)
         self.speed_x = apply_wind(self.speed_x, self.weight, Game)
@@ -144,21 +138,22 @@ class Shell(pygame.sprite.Sprite):
             if collide in (self.from_tank, self.target):
                 if self.confirm_collision(collide) == True:
                     self.explode(Game, collide)
+                    break
+            elif collide in Game.trees:
+                if self.confirm_collision(collide) == True:
+                    self.explode(Game, collide)
+                    break
         
         if int(self.pos_y) >= (598-Game.ground[int(self.pos_x)]):
             self.explode(Game)
-            #explosion(int(self.pos_x), int(self.pos_y), Game)
-            #Game.sprites.remove(self)
-            #Game.change_turn(self.from_tank)
 
     def explode(self, Game, collide=None):
         if collide != None:
-            damage = collide.stain_black(self.pos_x, self.pos_y)
-            collide.damage += int(damage/10)
+            collide.stain_black(self.pos_x, self.pos_y)
             Game.screen.blit(collide.image, collide.rect)
         explosion(int(self.pos_x), int(self.pos_y), Game)
         Game.sprites.remove(self)
-        Game.change_turn(self.from_tank)
+        Game.change_turn()
 
     def confirm_collision(self, target):
         if target.rect.collidepoint(int(self.pos_x), int(self.pos_y)) == True:

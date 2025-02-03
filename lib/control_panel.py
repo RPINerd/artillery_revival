@@ -3,6 +3,7 @@
 import pygame, os, time, random
 from pygame.locals import *
 from load_save import load_image
+from load_save import load_music
 from tank import Shell
 from background import update_screen
 from explosion import Smoke
@@ -179,32 +180,40 @@ class Control_panel(object):
 
     def check_mouse_event(self, Game):
         button1, button2, button3 = pygame.mouse.get_pressed()
+        if (button1, button2, button3) == (0,0,0):
+            pygame.mixer.music.stop()
         pos = pygame.mouse.get_pos()
         for tank in Game.tanks:
             if (tank.position == Game.turn) and (button1 == True):
-                if (time.time() - self.button_timer) > 0.05:
+                if (time.time() - self.button_timer) > 0.07:
                     self.button_timer = time.time()
                     if self.button_up_barrel_rect.collidepoint(pos) == True:
+                        check_sound()
                         self.screen.blit(self.button_shadowed, self.button_up_barrel_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.turn(1)
                         return
                     elif self.button_down_barrel_rect.collidepoint(pos) == True:
+                        check_sound()
                         self.screen.blit(self.button_shadowed, self.button_down_barrel_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.turn(-1)
                         return
 
                     if self.button_up_powder_rect.collidepoint(pos) == True:
+                        Game.sound.play("powder")
                         self.screen.blit(self.button_shadowed, self.button_up_powder_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.powder += 1
                         if tank.gun.powder > 99:
                             tank.gun.powder = 99
                         return
                     elif self.button_down_powder_rect.collidepoint(pos) == True:
+                        Game.sound.play("powder")
                         self.screen.blit(self.button_shadowed, self.button_down_powder_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.powder -= 1
                         if tank.gun.powder < 10:
                             tank.gun.powder = 10
                         return
+                    pygame.mixer.music.stop()
+                    
                 if self.button_fire_rect.collidepoint(pos) == True:
                     fire_shell(self, Game, tank)
                     
@@ -304,6 +313,7 @@ class Control_panel(object):
             rectlist.append(self.rect)
             pygame.display.update(rectlist)
             Game.sprites.clear(Game.screen, Game.background)
+            pygame.event.pump()
             
             if Game.wind == wind_adjusted:
                 return
@@ -312,6 +322,7 @@ class Control_panel(object):
 
 
 def fire_shell(panel, Game, tank):
+    pygame.mixer.music.stop()
     if tank.position == "left":
         Game.sprites.add(Smoke(tank.gun.rect.right, tank.gun.rect.top, Game, False, "gun"))
         Game.sprites.add(Smoke(tank.gun.rect.left, tank.gun.rect.bottom+10, Game, True, "gun"))
@@ -325,6 +336,12 @@ def fire_shell(panel, Game, tank):
     Game.background = update_screen(Game)
     pygame.display.update()
 
+
+def check_sound():
+    if pygame.mixer.music.get_busy() == True:
+        return
+    music = load_music('elevation.ogg')
+    pygame.mixer.music.play(-1)
 
 
         

@@ -9,7 +9,7 @@ from config import *
 
 def explosion(exp_x, exp_y, Game):
     particles = []
-    Game.sound.play("explosion")
+    Game.sound.play("explosion_ground")
 
     Game.screen.lock()
     for i in range(1,17):
@@ -30,8 +30,9 @@ def explosion(exp_x, exp_y, Game):
                     speed_y = (random.random()*2)-1.2
                 else:
                     speed_y = (3/(exp_y - y)*random.random()*2)-1
-                particle = Particle(color, x, y, speed_x, speed_y)
-                particles.append(particle)
+                if random.randint(0,3) != 0:
+                    particle = Particle(color, x, y, speed_x, speed_y)
+                    particles.append(particle)
                 if y >= (600-Game.ground[x]):
                     Game.ground[x] = 599 - y
                 while color != (120, 80, 50, 255):
@@ -119,10 +120,9 @@ class Smoke(pygame.sprite.Sprite):
     images[4] = load_image_alpha('smoke4.png', 'sprites/smoke')
     images[5] = load_image_alpha('smoke5.png', 'sprites/smoke')
     images[6] = load_image_alpha('smoke6.png', 'sprites/smoke')
-    images[7] = load_image_alpha('smoke7.png', 'sprites/smoke')
     def __init__(self, x, y, Game, rotate_clockwise=True, smoke_type=None, max_size=130):
         pygame.sprite.Sprite.__init__(self)
-        self.image = Smoke.images[random.randint(1,7)].convert_alpha()
+        self.image = Smoke.images[random.randint(1,6)].convert_alpha()
         self.rect = self.image.get_rect(center = (x, y))
         self.blending_color = pygame.Surface((self.image.get_size()), SRCALPHA)
         self.blending_color.fill((1,1,1,0))
@@ -136,12 +136,12 @@ class Smoke(pygame.sprite.Sprite):
             self.y = y - 5
             if rotate_clockwise == False:
                 self.angle_adjust = random.random()+0.4
-                self.x = x + random.randint(10,20)
-                self.speed_x = (random.random()/8)+0.055
+                self.x = x + random.randint(7,14)
+                self.speed_x = (random.random()/8)+0.06
             else:
                 self.angle_adjust = random.random()-1.4
-                self.x = x - random.randint(10,20)
-                self.speed_x = (random.random()/8)-0.18
+                self.x = x - random.randint(7,14)
+                self.speed_x = (random.random()/8)-0.19
 
         elif smoke_type == "gun":
             self.x = x

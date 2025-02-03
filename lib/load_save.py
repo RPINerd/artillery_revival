@@ -40,3 +40,17 @@ def load_sound(name):
         raise SystemExit, message
     return sound
 
+def load_music(name):
+    class NoneSound:
+        def play(self): pass
+    if not pygame.mixer or not pygame.mixer.get_init():
+        return NoneSound()
+    fullname = os.path.join('data', 'sound', name)
+    try:
+        music = pygame.mixer.music.load(fullname)
+    except pygame.error, message:
+        print 'Cannot load music:', fullname
+        raise SystemExit, message
+    return music
+
+

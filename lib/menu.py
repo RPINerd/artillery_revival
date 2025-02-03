@@ -66,42 +66,39 @@ class Menu(object):
             self.screen.blit(text, (self.quit_rect.centerx-(text.get_width()/2), self.quit_rect.centery-(text.get_height()/2)))
 
     def check_mouse_event(self, Game, pos):
-        if self.game_started == False:
-            if self.new_game_selected == False:
-                if self.new_game_rect.collidepoint(pos) == True:
-                    self.new_game_selected = True
-                    self.update_screen = True
-                elif self.quit_rect.collidepoint(pos) == True:
-                    Game.state = STATE_QUIT
-            else:
-                if self.players_selected == False:
-                    if self.player1_rect.collidepoint(pos) == True:
-                        self.players_selected = True
-                        Game.number_players = 1
-                        self.update_screen = True
-                    elif self.player2_rect.collidepoint(pos) == True:
-                        self.players_selected = True
-                        Game.number_players = 2
-                        self.update_screen = True
-                else:
-                    if self.difficulty_selected == False:
-                        if self.private_rect.collidepoint(pos) == True:
-                            self.difficulty_selected = True
-                            Game.difficulty = 1
-                            Game.start_game = True
-                        elif self.captain_rect.collidepoint(pos) == True:
-                            self.difficulty_selected = True
-                            Game.difficulty = 2
-                            Game.start_game = True
-                        elif self.general_rect.collidepoint(pos) == True:
-                            self.difficulty_selected = True
-                            Game.difficulty = 3
-                            Game.start_game = True
-                    else:
-                        pass
-
+        if self.new_game_selected == False:
+            if self.new_game_rect.collidepoint(pos) == True:
+                self.new_game_selected = True
+                self.update_screen = True
+                Game.fade = []
+            elif self.quit_rect.collidepoint(pos) == True:
+                Game.state = STATE_QUIT
         else:
-            pass
+            if self.players_selected == False:
+                if self.player1_rect.collidepoint(pos) == True:
+                    self.players_selected = True
+                    Game.number_players = 1
+                    self.update_screen = True
+                elif self.player2_rect.collidepoint(pos) == True:
+                    self.players_selected = True
+                    Game.number_players = 2
+                    self.update_screen = True
+            else:
+                if self.difficulty_selected == False:
+                    if self.private_rect.collidepoint(pos) == True:
+                        self.difficulty_selected = True
+                        Game.difficulty = 1
+                        Game.start_game = True
+                    elif self.captain_rect.collidepoint(pos) == True:
+                        self.difficulty_selected = True
+                        Game.difficulty = 2
+                        Game.start_game = True
+                    elif self.general_rect.collidepoint(pos) == True:
+                        self.difficulty_selected = True
+                        Game.difficulty = 3
+                        Game.start_game = True
+                else:
+                    pass
 
         if Game.start_game == True:
             self.new_game_selected = False
