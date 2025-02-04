@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+"""This module contains the FadeIn and FadeOut classes, which are used to create a fade in/out effect for the screen."""
 
 import pygame
-from pygame.locals import *
+from pygame.locals import BLEND_RGB_MULT
+
 
 class Fade_in(object):
     def __init__(self, rect):

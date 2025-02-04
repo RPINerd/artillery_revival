@@ -4,11 +4,11 @@ import math
 import random
 
 import pygame
-from pygame.locals import *
+from pygame.locals import BLEND_RGB_ADD, BLEND_RGBA_ADD, BLEND_RGBA_SUB, SRCALPHA
 
 from .background import update_screen
-from .config import *
-from .load_save import *
+from .config import GRAVITY
+from .load_save import load_image, load_image_alpha
 
 
 def explosion(exp_x, exp_y, Game):

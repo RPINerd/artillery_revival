@@ -4,7 +4,7 @@ import math
 
 import pygame
 
-from .explosion import *
+from .explosion import apply_wind, explosion, gravity
 from .load_save import load_image
 
 

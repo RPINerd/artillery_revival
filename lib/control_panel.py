@@ -8,7 +8,7 @@ import pygame
 from pygame.locals import BLEND_RGB_ADD, BLEND_RGB_MULT, BLEND_RGB_SUB
 
 from .background import update_screen
-from .config import *
+from .config import FRAME_SPEED
 from .explosion import Smoke
 from .load_save import load_image, load_music
 from .tank import Shell

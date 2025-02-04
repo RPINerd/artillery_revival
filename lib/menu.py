@@ -5,8 +5,7 @@ from pathlib import Path
 
 import pygame
 
-from .config import *
-from .fade import *
+from .config import GAME_NAME, GAME_VER, STATE_QUIT
 
 
 class Menu:

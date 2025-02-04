@@ -25,10 +25,10 @@ from .config import (
 )
 from .control_panel import Control_panel
 from .explosion import Smoke
-from .fade import *
+from .fade import FadeIn, clear_fading, draw_fading
 from .menu import Menu
 from .sound import Sound
-from .tank import *
+from .tank import Gun, Tank
 
 if not pygame.font:
     print("Warning, fonts disabled")
