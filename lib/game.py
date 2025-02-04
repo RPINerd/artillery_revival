@@ -3,6 +3,7 @@
 import os
 import random
 import time
+from pathlib import Path
 
 import pygame
 from pygame.locals import DOUBLEBUF, FULLSCREEN, HWSURFACE, K_ESCAPE, KEYDOWN, MOUSEBUTTONDOWN, QUIT
@@ -56,7 +57,7 @@ class Game:
         self.menu = Menu(self)
         self.sound = Sound()
         self.sprites = pygame.sprite.OrderedUpdates()
-        self.font = pygame.font.Font(os.path.join("data", "misc", "COOPBL.ttf"), 28)
+        self.font = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 28)
 
         self.initialize_game()
 

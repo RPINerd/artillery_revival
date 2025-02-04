@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import os
+
+from pathlib import Path
 
 import pygame
 
@@ -30,9 +31,9 @@ class Menu:
         self.players_selected = False
         self.difficulty_selected = False
 
-        self.title_font = pygame.font.Font(os.path.join('data', 'misc', 'COOPBL.ttf'), 50)
-        self.font = pygame.font.Font(os.path.join('data', 'misc', 'COOPBL.ttf'), 30)
-        self.version_font = pygame.font.Font(os.path.join('data', 'misc', 'COOPBL.ttf'), 14)
+        self.title_font = pygame.font.Font(Path.joinpath(Path.cwd(), 'data', 'misc', 'COOPBL.ttf'), 50)
+        self.font = pygame.font.Font(Path.joinpath(Path.cwd(), 'data', 'misc', 'COOPBL.ttf'), 30)
+        self.version_font = pygame.font.Font(Path.joinpath(Path.cwd(), 'data', 'misc', 'COOPBL.ttf'), 14)
 
     def draw(self):
         self.screen.fill((0, 0, 0))

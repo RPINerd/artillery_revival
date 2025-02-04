@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import os
 import random
 import time
+from pathlib import Path
 
 import pygame
 from pygame.locals import BLEND_RGB_ADD, BLEND_RGB_MULT, BLEND_RGB_SUB
@@ -17,14 +17,14 @@ from .tank import Shell
 class Control_panel:
     def __init__(self):
         self.screen = pygame.display.get_surface()
-        self.image = load_image('panel.png', 'sprites', -1)
-        self.timer_image = load_image('timer.png', 'sprites/effects', (255, 255, 255, 255))
-        self.wind_image = load_image('wind.png', 'sprites/effects', (255, 255, 255, 255))
-        self.barrel_powder_image = load_image('barrel_powder.png', 'sprites/effects', (255, 255, 255, 255))
+        self.image = load_image("panel.png", "sprites", -1)
+        self.timer_image = load_image("timer.png", "sprites/effects", (255, 255, 255, 255))
+        self.wind_image = load_image("wind.png", "sprites/effects", (255, 255, 255, 255))
+        self.barrel_powder_image = load_image("barrel_powder.png", "sprites/effects", (255, 255, 255, 255))
         self.rect = self.image.get_rect(topleft=(0, 0))
         self.display = True
-        self.font = pygame.font.Font(os.path.join('data', 'misc', 'COOPBL.ttf'), 36)
-        self.font_timer = pygame.font.Font(os.path.join('data', 'misc', 'COOPBL.ttf'), 30)
+        self.font = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 36)
+        self.font_timer = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 30)
         self.player_timer = time.time()
         self.highlight_button = False
         self.button_shadowed = pygame.Surface((34, 34))
@@ -33,9 +33,9 @@ class Control_panel:
         self.timer_digit1 = time.time()
         self.timer_digit2 = time.time()
         self.spy_cam = pygame.Surface((194, 94))
-        self.spy_cam_static = load_image('static.png', 'sprites/effects', 0)
+        self.spy_cam_static = load_image("static.png", "sprites/effects", 0)
         self.spy_cam_good_signal = True
-        self.glare = load_image('glare.png', 'sprites/effects', (255, 255, 255, 255))
+        self.glare = load_image("glare.png", "sprites/effects", (255, 255, 255, 255))
 
         self.player_rect = {}
         self.player_rect["left"] = pygame.Rect(33, 62, 34, 34)
@@ -337,5 +337,5 @@ def fire_shell(panel, Game, tank):
 def check_sound():
     if pygame.mixer.music.get_busy() == True:
         return
-    music = load_music('elevation.ogg')
+    music = load_music("elevation.ogg")
     pygame.mixer.music.play(-1)
