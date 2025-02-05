@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+""""""
 
 import random
 import time
@@ -15,41 +15,44 @@ from .tank import Shell
 
 
 class Control_panel:
-    def __init__(self):
-        self.screen = pygame.display.get_surface()
-        self.image = load_image("panel.png", "sprites", -1)
-        self.timer_image = load_image("timer.png", "sprites/effects", (255, 255, 255, 255))
-        self.wind_image = load_image("wind.png", "sprites/effects", (255, 255, 255, 255))
-        self.barrel_powder_image = load_image("barrel_powder.png", "sprites/effects", (255, 255, 255, 255))
-        self.rect = self.image.get_rect(topleft=(0, 0))
-        self.display = True
-        self.font = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 36)
-        self.font_timer = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 30)
-        self.player_timer = time.time()
-        self.highlight_button = False
-        self.button_shadowed = pygame.Surface((34, 34))
+    """"""
+    def __init__(self) -> None:
+        """"""
+        self.screen: pygame.Surface = pygame.display.get_surface()
+        self.image: pygame.Surface = load_image("panel.png", "sprites", -1)
+        self.timer_image: pygame.Surface = load_image("timer.png", "sprites/effects", (255, 255, 255, 255))
+        self.wind_image: pygame.Surface = load_image("wind.png", "sprites/effects", (255, 255, 255, 255))
+        self.barrel_powder_image: pygame.Surface = load_image("barrel_powder.png", "sprites/effects", (255, 255, 255, 255))
+        self.rect: pygame.Rect = self.image.get_rect(topleft=(0, 0))
+        self.display: bool = True
+        self.font: pygame.font.Font = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 36)
+        self.font_timer: pygame.font.Font = pygame.font.Font(Path.joinpath(Path.cwd(), "data", "misc", "COOPBL.ttf"), 30)
+        self.player_timer: float = time.time()
+        self.highlight_button: bool = False
+        self.button_shadowed: pygame.Surface = pygame.Surface((34, 34))
         self.button_shadowed.fill((60, 60, 60))
-        self.button_timer = time.time()
-        self.timer_digit1 = time.time()
-        self.timer_digit2 = time.time()
-        self.spy_cam = pygame.Surface((194, 94))
-        self.spy_cam_static = load_image("static.png", "sprites/effects", 0)
-        self.spy_cam_good_signal = True
-        self.glare = load_image("glare.png", "sprites/effects", (255, 255, 255, 255))
+        self.button_timer: float = time.time()
+        self.timer_digit1: float = time.time()
+        self.timer_digit2: float = time.time()
+        self.spy_cam: pygame.Surface = pygame.Surface((194, 94))
+        self.spy_cam_static: pygame.Surface = load_image("static.png", "sprites/effects", 0)
+        self.spy_cam_good_signal: bool = True
+        self.glare: pygame.Surface = load_image("glare.png", "sprites/effects", (255, 255, 255, 255))
 
-        self.player_rect = {}
+        self.player_rect: dict[str, pygame.Rect] = {}
         self.player_rect["left"] = pygame.Rect(33, 62, 34, 34)
         self.player_rect["right"] = pygame.Rect(243, 62, 34, 34)
-        self.button_up_barrel_rect = pygame.Rect(193, 84, 34, 34)
-        self.button_down_barrel_rect = pygame.Rect(83, 84, 34, 34)
-        self.barrel_rect = pygame.Rect(122, 84, 66, 34)
-        self.button_up_powder_rect = pygame.Rect(682, 84, 34, 34)
-        self.button_down_powder_rect = pygame.Rect(572, 84, 34, 34)
-        self.powder_rect = pygame.Rect(611, 84, 66, 34)
-        self.button_fire_rect = pygame.Rect(732, 23, 34, 73)
-        self.wind_rect = pygame.Rect(650, 23, 66, 34)
+        self.button_up_barrel_rect: pygame.Rect = pygame.Rect(193, 84, 34, 34)
+        self.button_down_barrel_rect: pygame.Rect = pygame.Rect(83, 84, 34, 34)
+        self.barrel_rect: pygame.Rect = pygame.Rect(122, 84, 66, 34)
+        self.button_up_powder_rect: pygame.Rect = pygame.Rect(682, 84, 34, 34)
+        self.button_down_powder_rect: pygame.Rect = pygame.Rect(572, 84, 34, 34)
+        self.powder_rect: pygame.Rect = pygame.Rect(611, 84, 66, 34)
+        self.button_fire_rect: pygame.Rect = pygame.Rect(732, 23, 34, 73)
+        self.wind_rect: pygame.Rect = pygame.Rect(650, 23, 66, 34)
 
-    def update(self, Game):
+    def update(self, Game) -> None:
+        """"""
         self.screen.blit(self.image, self.rect)
         tanks = {}
         for tank in Game.tanks:
@@ -65,17 +68,17 @@ class Control_panel:
 
         if (time.time() - self.player_timer) > 0.4:
             self.player_timer = time.time()
-            if self.highlight_button == False:
+            if not self.highlight_button:
                 self.highlight_button = True
             else:
                 self.highlight_button = False
             if random.randint(0, 1) == 0:
-                if (self.spy_cam_good_signal == True) and (random.randint(0, 1) == 0):
+                if (self.spy_cam_good_signal) and (random.randint(0, 1) == 0):
                     self.spy_cam_good_signal = False
                 else:
                     self.spy_cam_good_signal = True
 
-        if self.highlight_button == True:
+        if self.highlight_button:
             rect = self.player_rect[tank.position]
             self.screen.fill((0, 0, 0), rect)
             if tank.position == "left":
@@ -85,16 +88,19 @@ class Control_panel:
             self.screen.blit(text, (rect.centerx - (text.get_width() / 2), rect.centery - (text.get_height() / 2) - 2))
 
         # Wind
-        if self.update_wind == True:
+        if self.update_wind:
             self.updating_wind(Game)
             self.update_wind = False
 
         wind1 = int(Game.wind / 10)
         wind2 = Game.wind - (wind1 * 10)
         text = self.font.render(str(wind1), True, (30, 30, 30))
-        self.screen.blit(text, (self.wind_rect.centerx - ((text.get_width() / 2) + 16), self.wind_rect.centery - (text.get_height() / 2) - 3))
+        x_pos_adjust = self.wind_rect.centerx - ((text.get_width() / 2) + 16)
+        x_neg_adjust = self.wind_rect.centerx - ((text.get_width() / 2) - 16)
+        y_adjust = self.wind_rect.centery - (text.get_height() / 2) - 3
+        self.screen.blit(text, (x_pos_adjust, y_adjust))
         text = self.font.render(str(wind2), True, (30, 30, 30))
-        self.screen.blit(text, (self.wind_rect.centerx - ((text.get_width() / 2) - 16), self.wind_rect.centery - (text.get_height() / 2) - 3))
+        self.screen.blit(text, (x_neg_adjust, y_adjust))
         self.screen.blit(self.wind_image, (650, 23), None, BLEND_RGB_MULT)
 
         # Center timer
@@ -108,7 +114,7 @@ class Control_panel:
         digit1 = pygame.Surface((27, 48))
         digit2 = pygame.Surface((27, 48))
         color = (255, 255, 255)
-        if (tank_time1 == 0) and (tank_time2 <= 4) and (self.highlight_button == True):
+        if (tank_time1 == 0) and (tank_time2 <= 4) and self.highlight_button:
             color = (255, 0, 0)
         digit1.fill(color)
         digit2.fill(color)
@@ -157,7 +163,7 @@ class Control_panel:
         cam_rect = cam_rect.inflate(134, 72)
         cam_rect.move_ip(0, -10)
         self.spy_cam.blit(Game.screen, (0, 0), cam_rect)
-        if self.spy_cam_good_signal == False:
+        if not self.spy_cam_good_signal:
             static_rect = self.spy_cam.get_rect(topleft=(random.randint(0, 150), random.randint(0, 100)))
             static_rect = static_rect.clamp(self.spy_cam_static.get_rect())
             static = self.spy_cam_static.copy()
@@ -181,33 +187,34 @@ class Control_panel:
         self.screen.blit(glare, (524, 129), None, BLEND_RGB_ADD)
         tank.time_to_fire = (tank_time1 * 10) + tank_time2
 
-    def check_mouse_event(self, Game):
+    def check_mouse_event(self, Game) -> None:
+        """"""
         button1, button2, button3 = pygame.mouse.get_pressed()
         if (button1, button2, button3) == (0, 0, 0):
             pygame.mixer.music.stop()
         pos = pygame.mouse.get_pos()
         for tank in Game.tanks:
-            if (tank.position == Game.turn) and (button1 == True):
+            if (tank.position == Game.turn) and button1:
                 if (time.time() - self.button_timer) > 0.07:
                     self.button_timer = time.time()
-                    if self.button_up_barrel_rect.collidepoint(pos) == True:
+                    if self.button_up_barrel_rect.collidepoint(pos):
                         check_sound()
                         self.screen.blit(self.button_shadowed, self.button_up_barrel_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.turn(1)
                         return
-                    if self.button_down_barrel_rect.collidepoint(pos) == True:
+                    if self.button_down_barrel_rect.collidepoint(pos):
                         check_sound()
                         self.screen.blit(self.button_shadowed, self.button_down_barrel_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.turn(-1)
                         return
 
-                    if self.button_up_powder_rect.collidepoint(pos) == True:
+                    if self.button_up_powder_rect.collidepoint(pos):
                         Game.sound.play("powder")
                         self.screen.blit(self.button_shadowed, self.button_up_powder_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.powder += 1
                         tank.gun.powder = min(tank.gun.powder, 99)
                         return
-                    if self.button_down_powder_rect.collidepoint(pos) == True:
+                    if self.button_down_powder_rect.collidepoint(pos):
                         Game.sound.play("powder")
                         self.screen.blit(self.button_shadowed, self.button_down_powder_rect.topleft, None, BLEND_RGB_MULT)
                         tank.gun.powder -= 1
@@ -215,13 +222,14 @@ class Control_panel:
                         return
                     pygame.mixer.music.stop()
 
-                if self.button_fire_rect.collidepoint(pos) == True:
+                if self.button_fire_rect.collidepoint(pos):
                     fire_shell(self, Game, tank)
 
                 break
             continue
 
-    def updating_wind(self, Game):
+    def updating_wind(self, Game) -> None:
+        """"""
         self.timer_digit1 = time.time()
         self.timer_digit2 = time.time()
         wind_adjusted = Game.wind + (random.randint(-3, 3) * Game.difficulty)
@@ -318,7 +326,8 @@ class Control_panel:
                 return
 
 
-def fire_shell(panel, Game, tank):
+def fire_shell(panel, Game, tank) -> None:
+    """"""
     pygame.mixer.music.stop()
     if tank.position == "left":
         Game.sprites.add(Smoke(tank.gun.rect.right, tank.gun.rect.top, Game, False, "gun"))
@@ -334,7 +343,8 @@ def fire_shell(panel, Game, tank):
     pygame.display.update()
 
 
-def check_sound():
+def check_sound() -> None:
+    """"""
     if pygame.mixer.music.get_busy() == True:
         return
     music = load_music("elevation.ogg")

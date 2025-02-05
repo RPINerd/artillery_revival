@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""Functions for loading images and sounds from the data directory."""
 
 from pathlib import Path
 
@@ -6,7 +6,8 @@ import pygame
 from pygame.locals import RLEACCEL
 
 
-def load_image(image_name, path, colorkey=None):
+def load_image(image_name: str, path: str, colorkey: tuple[int] | None = None) -> pygame.Surface:
+    """Load an image from the data directory."""
     fullname = Path.joinpath(Path.cwd(), 'data', str(path), image_name)
     try:
         image = pygame.image.load(fullname)
@@ -20,7 +21,8 @@ def load_image(image_name, path, colorkey=None):
     return image.convert()
 
 
-def load_image_alpha(image_name, path):
+def load_image_alpha(image_name: str, path: str) -> pygame.Surface:
+    """Load an image with alpha transparency from the data directory."""
     fullname = Path.joinpath(Path.cwd(), 'data', str(path), image_name)
     try:
         image = pygame.image.load(fullname)
@@ -30,7 +32,8 @@ def load_image_alpha(image_name, path):
     return image
 
 
-def load_sound(name):
+def load_sound(name: str) -> pygame.mixer.Sound:
+    """Load a sound from the data directory."""
     class NoneSound:
         def play(self): pass
     if not pygame.mixer or not pygame.mixer.get_init():
@@ -44,7 +47,8 @@ def load_sound(name):
     return sound
 
 
-def load_music(name):
+def load_music(name: str) -> pygame.mixer.music:
+    """Load music from the data directory."""
     class NoneSound:
         def play(self): pass
     if not pygame.mixer or not pygame.mixer.get_init():

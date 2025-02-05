@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+""""""
 
 import math
 
@@ -12,15 +12,16 @@ class Tank(pygame.sprite.Sprite):
 
     """The tank object"""
 
-    def __init__(self, position, Game):
+    def __init__(self, position: str, Game) -> None:
+        """"""
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image('tank.png', 'sprites', -1)
-        self.rect = self.image.get_rect()
-        self.ground = Game.ground
-        self.position = position
-        self.time_to_fire = 14
-        self.damage = 0
-        self.damaged = False
+        self.image: pygame.Surface = load_image('tank.png', 'sprites', -1)
+        self.rect: pygame.Rect = self.image.get_rect()
+        self.ground: list = Game.ground
+        self.position: str = position
+        self.time_to_fire: int = 14
+        self.damage: int = 0
+        self.damaged: bool = False
 
         # self.intro_image = Tank.image.copy()
         # self.intro_image.blit(load_image('gun.png', 'sprites', -1), (38,4))
@@ -34,22 +35,23 @@ class Tank(pygame.sprite.Sprite):
             # self.intro_image = pygame.transform.flip(self.intro_image, 1, 0)
         self.base_image = self.image
 
-    def update(self, Game):
+    def update(self, Game) -> None:
+        """"""
         pass
 
-    def stain_black(self, shell_x, shell_y):
-        x = int(shell_x) - self.rect.left
-        y = int(shell_y) - self.rect.top
+    def stain_black(self, shell_x: int, shell_y: int) -> None:
+        """"""
+        x = shell_x - self.rect.left
+        y = shell_y - self.rect.top
         pixel_count = 0
         self.image.lock()
         for i in range(1, 20):
             for angles in range(0, 360, 6):
-                pixel_x = int(x + math.sin(math.radians(angles)) * i)
-                pixel_y = int(y + math.cos(math.radians(angles)) * i)
+                # TODO bind this within the image rect
+                pixel_x = abs(int(x + math.sin(math.radians(angles)) * i))
+                pixel_y = abs(int(y + math.cos(math.radians(angles)) * i))
                 if pixel_x > (self.rect.width - 1): continue
-                if pixel_x < 0: continue
                 if pixel_y > (self.rect.height - 1): continue
-                if pixel_y < 0: continue
                 color = self.image.get_at((pixel_x, pixel_y))
                 if color != (255, 125, 255):
                     self.image.set_at((pixel_x, pixel_y), (int(color[0] * 0.6), int(color[1] * 0.6), int(color[2] * 0.6)))
@@ -58,7 +60,8 @@ class Tank(pygame.sprite.Sprite):
         self.damage += int(pixel_count / 10)
         self.damaged = True
 
-    def intro(self, x, ground):
+    def intro(self, x, ground) -> None:
+        """"""
         pass
 
 
@@ -68,7 +71,8 @@ class Gun(pygame.sprite.Sprite):
 
     image = None
 
-    def __init__(self, position, Game):
+    def __init__(self, position: str, Game) -> None:
+        """"""
         pygame.sprite.Sprite.__init__(self)
         if Gun.image is None:
             Gun.image = load_image('gun.png', 'sprites', -1)
@@ -85,7 +89,8 @@ class Gun(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, 1, 0)
         self.base_image = self.image
 
-    def turn(self, adjustment):
+    def turn(self, adjustment: int) -> None:
+        """"""
         self.angle += adjustment
         if self.angle > 90:
             self.angle = 90
@@ -103,7 +108,8 @@ class Gun(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.bottomright = old_rect
 
-    def update(self, Game):
+    def update(self, Game) -> None:
+        """"""
         pass
 
 
@@ -113,7 +119,8 @@ class Shell(pygame.sprite.Sprite):
 
     image = None
 
-    def __init__(self, tank, ground):
+    def __init__(self, tank: Tank, ground) -> None:
+        """"""
         pygame.sprite.Sprite.__init__(self)
         if Shell.image is None:
             Shell.image = load_image('shell.png', 'sprites', -1)
@@ -133,7 +140,8 @@ class Shell(pygame.sprite.Sprite):
         self.pos_y = self.rect.centery
         self.weight = 55
 
-    def update(self, Game):
+    def update(self, Game) -> None:
+        """"""
         self.pos_x += self.speed_x
         if (self.pos_x >= 779) or (self.pos_x <= 21):
             Game.sprites.remove(self)
@@ -148,26 +156,26 @@ class Shell(pygame.sprite.Sprite):
 
         for collide in pygame.sprite.spritecollide(self, Game.sprites, 0):
             if collide in (self.from_tank, self.target) or collide in Game.trees:
-                if self.confirm_collision(collide) == True:
+                if self.confirm_collision(collide):
                     self.explode(Game, collide)
                     break
 
         if int(self.pos_y) >= (598 - Game.ground[int(self.pos_x)]):
             self.explode(Game)
 
-    def explode(self, Game, collide=None):
-        if collide != None:
+    def explode(self, Game, collide=None) -> None:
+        """"""
+        if collide is not None:
             collide.stain_black(self.pos_x, self.pos_y)
             Game.screen.blit(collide.image, collide.rect)
         explosion(int(self.pos_x), int(self.pos_y), Game)
         Game.sprites.remove(self)
         Game.change_turn()
 
-    def confirm_collision(self, target):
-        if target.rect.collidepoint(int(self.pos_x), int(self.pos_y)) == True:
+    def confirm_collision(self, target) -> bool:
+        """"""
+        if target.rect.collidepoint(int(self.pos_x), int(self.pos_y)):
             adjusted_x = int(self.pos_x) - target.rect.left
             adjusted_y = int(self.pos_y) - target.rect.top
-            if target.image.get_at((adjusted_x, adjusted_y)) != target.image.get_colorkey():
-                return True
-            return False
+            return target.image.get_at((adjusted_x, adjusted_y)) != target.image.get_colorkey()
         return False

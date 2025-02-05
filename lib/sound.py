@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+""""""
 
 import time
 
@@ -9,7 +9,8 @@ class Sound:
 
     """Sound Mixer"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """"""
         self.sounds = {}
         self.sounds["gun"] = load_sound('gun.ogg')
         self.sounds["gun"].set_volume(0.8)
@@ -21,7 +22,8 @@ class Sound:
         self.sounds["powder"].set_volume(0.5)
         self.powder_sound_timer = time.time()
 
-    def play(self, key):
+    def play(self, key) -> None:
+        """"""
         sound = self.sounds[key]
         if key != "powder":
             sound.play()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+""""""
 
 import math
 import random
@@ -11,7 +11,8 @@ from .config import GRAVITY
 from .load_save import load_image, load_image_alpha
 
 
-def explosion(exp_x, exp_y, Game):
+def explosion(exp_x, exp_y, Game) -> None:
+    """"""
     particles = []
     Game.sound.play("explosion_ground")
 
@@ -65,7 +66,8 @@ class Particle(pygame.sprite.Sprite):
 
     """The particle object"""
 
-    def __init__(self, color, x, y, speed_x, speed_y):
+    def __init__(self, color, x, y, speed_x, speed_y) -> None:
+        """"""
         pygame.sprite.Sprite.__init__(self)
         self.width = random.randint(1, 3)
         self.height = random.randint(1, 3)
@@ -79,18 +81,14 @@ class Particle(pygame.sprite.Sprite):
         self.speed_y = speed_y
         self.weight = (self.width * self.height * 20) + 20
 
-    def update(self, Game):
+    def update(self, Game) -> None:
         self.x += self.speed_x
         if (int(self.x > 795)) or (int(self.x < 5)):
             Game.sprites.remove(self)
         self.y += self.speed_y
-
-        if self.speed_x > 0:
-            if (599 - Game.ground[int(self.x) + 1]) < (int(self.y)):
-                self.speed_x = (0 - self.speed_x) * 0.15
-        elif self.speed_x < 0:
-            if (599 - Game.ground[int(self.x) - 1]) < (int(self.y)):
-                self.speed_x = (0 - self.speed_x) * 0.15
+        speed_select = 1 if self.speed_x > 0 else -1
+        if (599 - Game.ground[int(self.x) + speed_select]) < (int(self.y)):
+            self.speed_x = (0 - self.speed_x) * 0.15
 
         if int(self.y) >= (599 - Game.ground[int(self.x)]):
             self.speed_y = (0 - self.speed_y) * 0.1
@@ -127,7 +125,8 @@ class Smoke(pygame.sprite.Sprite):
     images[5] = load_image_alpha('smoke5.png', 'sprites/smoke')
     images[6] = load_image_alpha('smoke6.png', 'sprites/smoke')
 
-    def __init__(self, x, y, Game, rotate_clockwise=True, smoke_type=None, max_size=130):
+    def __init__(self, x: int, y: int, Game, rotate_clockwise: bool = True, smoke_type=None, max_size: int = 130) -> None:
+        """"""
         pygame.sprite.Sprite.__init__(self)
         self.image = Smoke.images[random.randint(1, 6)].convert_alpha()
         self.rect = self.image.get_rect(center=(x, y))
@@ -141,7 +140,7 @@ class Smoke(pygame.sprite.Sprite):
 
         if smoke_type == "ground":
             self.y = y - 5
-            if rotate_clockwise == False:
+            if not rotate_clockwise:
                 self.angle_adjust = random.random() + 0.4
                 self.x = x + random.randint(7, 14)
                 self.speed_x = (random.random() / 8) + 0.06
@@ -154,7 +153,7 @@ class Smoke(pygame.sprite.Sprite):
             self.x = x
             self.y = y
             self.speed_x = 0
-            if rotate_clockwise == False:
+            if not rotate_clockwise:
                 self.angle_adjust = random.random() + 0.2
             else:
                 self.angle_adjust = random.random() - 1.2
@@ -162,7 +161,7 @@ class Smoke(pygame.sprite.Sprite):
         elif smoke_type == "tank":
             self.y = y - 3
             self.speed_y = -1.2
-            if rotate_clockwise == False:
+            if not rotate_clockwise:
                 self.angle_adjust = random.random() + 1
                 self.x = x + random.randint(12, 16)
                 self.speed_x = (random.random() / 8) + 0.055
@@ -185,7 +184,8 @@ class Smoke(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.base_image, (int(self.base_image_rect.width * scale), int(self.base_image_rect.height * scale)))
         self.weight = 30
 
-    def update(self, Game):
+    def update(self, Game) -> None:
+        """"""
         scale = self.lifespan / self.max_size
         self.image = pygame.transform.scale(self.base_image, (int(self.base_image_rect.width * scale), int(self.base_image_rect.height * scale)))
         if self.angle_adjust != 0:
@@ -212,7 +212,8 @@ class Smoke(pygame.sprite.Sprite):
             Game.sprites.remove(self)
 
 
-def flare(x, y, Game):
+def flare(x: int, y: int, Game) -> None:
+    """"""
     # Currently disabled
     image = load_image('flare.png', 'sprites/effects', (0, 0, 0))
     rect = image.get_rect(center=(x, y))
@@ -222,16 +223,15 @@ def flare(x, y, Game):
     pygame.display.update(rect)
 
 
-def gravity(speed_y, weight):
-    ajustment = weight / GRAVITY
-    speed_y = speed_y + ajustment
-    speed_y = min(speed_y, 8.0)
-    return speed_y
+def gravity(speed_y: int | float, weight: int | float) -> float:
+    """"""
+    speed_y += weight / GRAVITY
+    return min(speed_y, 8.0)
 
 
-def apply_wind(speed_x, weight, Game):
+def apply_wind(speed_x: int | float, weight: int | float, Game) -> float:
+    """"""
     wind_difference = Game.wind - (speed_x * 5)
     air_resistance = 1 - (abs(wind_difference) / weight / 250)
     wind_ajustment = (wind_difference / weight / 60)
-    speed_x = (speed_x * air_resistance) + wind_ajustment
-    return speed_x
+    return (speed_x * air_resistance) + wind_ajustment

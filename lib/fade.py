@@ -4,19 +4,22 @@ import pygame
 from pygame.locals import BLEND_RGB_MULT
 
 
-class Fade_in(object):
-    def __init__(self, rect):
-        self.rect = rect
-        self.screen = pygame.display.get_surface()
-        self.image = pygame.Surface(rect.size)
-        self.color = 0
+class FadeIn:
+    """"""
+    def __init__(self, rect: pygame.Rect) -> None:
+        """"""
+        self.rect: pygame.Rect = rect
+        self.screen: pygame.Surface = pygame.display.get_surface()
+        self.image: pygame.Surface = pygame.Surface(rect.size)
+        self.color: int = 0
         self.image.fill((self.color, self.color, self.color))
-        self.finished = False
-        self.background = self.image.copy()
-        self.background.blit(self.screen, (0,0), rect)
-        self.screen.fill((0,0,0), rect)
+        self.finished: bool = False
+        self.background: pygame.Surface = self.image.copy()
+        self.background.blit(self.screen, (0, 0), rect)
+        self.screen.fill((0, 0, 0), rect)
 
-    def update(self):
+    def update(self) -> pygame.Rect:
+        """"""
         self.color += 5
         self.image.fill((self.color, self.color, self.color))
         self.screen.blit(self.image, self.rect, None, BLEND_RGB_MULT)
@@ -24,21 +27,26 @@ class Fade_in(object):
             self.finished = True
         return self.rect
 
-    def clear(self):
+    def clear(self) -> None:
+        """"""
         self.screen.blit(self.background, self.rect)
 
-class Fade_out(object):
-    def __init__(self, rect):
-        self.rect = rect
-        self.screen = pygame.display.get_surface()
-        self.image = pygame.Surface(rect.size)
-        self.color = 255
-        self.image.fill((self.color, self.color, self.color))
-        self.finished = False
-        self.background = self.image.copy()
-        self.background.blit(self.screen, (0,0), rect)
 
-    def update(self):
+class FadeOut:
+    """"""
+    def __init__(self, rect: pygame.Rect) -> None:
+        """"""
+        self.rect: pygame.Rect = rect
+        self.screen: pygame.Surface = pygame.display.get_surface()
+        self.image: pygame.Surface = pygame.Surface(rect.size)
+        self.color: int = 255
+        self.image.fill((self.color, self.color, self.color))
+        self.finished: bool = False
+        self.background: pygame.Surface = self.image.copy()
+        self.background.blit(self.screen, (0, 0), rect)
+
+    def update(self) -> pygame.Rect:
+        """"""
         self.color -= 5
         self.image.fill((self.color, self.color, self.color))
         self.screen.blit(self.image, self.rect, None, BLEND_RGB_MULT)
@@ -46,23 +54,26 @@ class Fade_out(object):
             self.finished = True
         return self.rect
 
-    def clear(self):
+    def clear(self) -> None:
+        """"""
         self.screen.blit(self.background, self.rect)
 
 
-def draw_fading(Game, rectlist):
+def draw_fading(Game, rectlist: list) -> list:
+    """"""
+    # TODO figure out what fade are for typing
     fade_list = Game.fade
     if len(fade_list) != 0:
         for fade in fade_list:
             rectlist.append(fade.update())
     return rectlist
 
-def clear_fading(Game):
+
+def clear_fading(Game) -> None:
+    """"""
     fade_list = Game.fade
     if len(fade_list) != 0:
         for fade in fade_list:
             fade.clear()
-            if fade.finished == True:
+            if fade.finished:
                 fade_list.remove(fade)
-
-
