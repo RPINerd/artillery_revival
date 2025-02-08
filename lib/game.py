@@ -24,12 +24,12 @@ from .config import (
     STATE_MENU,
     STATE_QUIT,
 )
-from .control_panel import Control_panel
+from .control_panel import ControlPanel
 from .explosion import Smoke
 from .fade import FadeIn, clear_fading, draw_fading
 from .menu import Menu
 from .sound import Sound
-from .tank import Gun, Tank
+from .tank import TANK_HEALTH, Gun, Tank
 
 if not pygame.font:
     print("Warning, fonts disabled")
@@ -72,7 +72,7 @@ class Game:
 
             rectlist = []
             if self.state == STATE_MENU:
-                self.eventCheckMenu()
+                self.event_check_menu()
 
             elif self.state == STATE_INTRO:
                 if len(self.fade) == 0:
@@ -84,20 +84,20 @@ class Game:
                     self.check_damage = False
                     self.timer = time.time()
                     defeated_tank = self.show_damage()
-                    if defeated_tank != None:
+                    if defeated_tank is not None:
                         self.timer = time.time()
                         exploded = False
                         showing_score = False
                 elif ((time.time() - self.timer) > 5) and not self.check_damage:
                     self.state = STATE_GAME
-                self.eventCheckWaiting()
+                self.event_check_waiting()
 
             elif self.state == STATE_GAME:
                 rectlist = self.draw_update_ground()
                 if ((time.time() - self.timer) > 5) and not self.shell_fired:
                     self.control_panel.update(self)
                     rectlist.append(self.panel_rect)
-                self.eventCheckGame()
+                self.event_check_game()
 
             elif self.state == STATE_END:
                 if not showing_score:
@@ -109,19 +109,19 @@ class Game:
                         explosion_timer = time.time()
                         exploded = True
                         self.sound.play("explosion_tank")
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, self, True, "ground", 90))
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, self, False, "ground", 90))
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery - 10, self, True, "ground"))
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery - 10, self, False, "ground"))
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, self, True, "tank", 140))
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, self, False, "tank", 140))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, True, "ground", 90))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, False, "ground", 90))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery - 10, True, "ground"))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery - 10, False, "ground"))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, True, "tank", 140))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, False, "tank", 140))
                     if ((time.time() - explosion_timer) > 0.5) and exploded:
                         explosion_timer = time.time()
-                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, self, False, "continuous", 150))
+                        self.sprites.add(Smoke(defeated_tank.rect.centerx, defeated_tank.rect.centery, False, "continuous", 150))
                 elif (time.time() - self.timer) > 7:
                     self.start_new_game()
                 rectlist = self.draw_update_ground()
-                self.eventCheckWaiting()
+                self.event_check_waiting()
 
             else:
                 pygame.quit()
@@ -146,7 +146,7 @@ class Game:
             self.update_ground_timer = time.time()
         return rectlist
 
-    def eventCheckMenu(self) -> None:
+    def event_check_menu(self) -> None:
         """Check input in the menu"""
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -186,13 +186,13 @@ class Game:
             self.menu.update_screen = False
             pygame.display.update()
 
-    def eventCheckGame(self) -> None:
+    def event_check_game(self) -> None:
         """Check input in the game"""
         for event in pygame.event.get():
             if event.type == QUIT:
                 self.state = STATE_QUIT
                 break
-            if (event.type == KEYDOWN) and (self.shell_fired == False):
+            if (event.type == KEYDOWN) and not self.shell_fired:
                 if (event.key == K_ESCAPE) and (len(self.fade) == 0):
                     self.state = STATE_MENU
                     self.menu.draw()
@@ -200,17 +200,18 @@ class Game:
                     self.background = self.screen.copy()
                     break
 
-        if ((time.time() - self.timer) > 5) and (self.shell_fired == False):
+        if ((time.time() - self.timer) > 5) and not self.shell_fired:
             self.control_panel.check_mouse_event(self)
 
-    def eventCheckWaiting(self) -> None:
+    def event_check_waiting(self) -> None:
         """Check input while waiting, showing damage, ending, etc."""
         for event in pygame.event.get():
             if event.type == QUIT:
                 self.state = STATE_QUIT
                 break
 
-    def start_new_game(self):
+    def start_new_game(self) -> None:
+        """"""
         self.sprites.empty()
         self.start_game = False
         self.game_started = True
@@ -234,23 +235,25 @@ class Game:
         self.ground, self.max_height = new_ground()
         self.ground_rect = pygame.Rect(0, 549 - self.max_height, 800, self.max_height + 50)
 
-        self.tanks = []
-        self.guns = []
-        Tank_left = Tank("left", self)
-        Gun_left = Gun("left", self)
-        Tank_left.gun = Gun_left
-        self.tanks.append(Tank_left)
-        self.guns.append(Gun_left)
-        Tank_right = Tank("right", self)
-        Gun_right = Gun("right", self)
-        Tank_right.gun = Gun_right
-        self.tanks.append(Tank_right)
-        self.guns.append(Gun_right)
+        self.tanks: list[Tank] = []
+        self.guns: list[Gun] = []
+
+        left_gun: Gun = Gun("left", self)
+        right_gun = Gun("right", self)
+        self.guns = [left_gun, right_gun]
+
+        left_tank: Tank = Tank("left", left_gun, self)
+        right_tank = Tank("right", right_gun, self)
+        self.tanks = [left_tank, right_tank]
+
         self.sprites.add(self.tanks)
         self.sprites.add(self.guns)
+
         self.shell_fired = False
-        Tank_right.ennemy = Tank_left
-        Tank_left.ennemy = Tank_right
+
+        right_tank.ennemy = left_tank
+        left_tank.ennemy = right_tank
+
         self.trees = []
         generate_trees(self)
         self.sprites.add(self.trees)
@@ -262,7 +265,7 @@ class Game:
         self.fade.append(FadeIn(self.screen.get_rect()))
         pygame.display.update()
 
-        self.control_panel = Control_panel()
+        self.control_panel = ControlPanel()
         self.panel_rect = pygame.Rect(0, 0, 800, 180)
         self.wind = (10 * self.difficulty) + random.randint(-3, 3)
         self.control_panel.update_wind = True
@@ -300,7 +303,7 @@ class Game:
         show_damage = False
         for tank in self.tanks:
             if tank.damaged:
-                if tank.damage >= 100:
+                if tank.damage >= TANK_HEALTH:
                     self.state = STATE_END
                     if tank.position == "left":
                         self.score[1] += 1
@@ -335,13 +338,13 @@ class Game:
         self.background = self.screen.copy()
 
 
-def play_intro(Game) -> None:
+def play_intro(game: Game) -> None:
     """"""
-    # for tank in Game.tanks:
+    # for tank in game.tanks:
     #     if tank.position == "left":
     #         for x in range(0, 100):
-    #             tank.intro(x, Game.ground)
-    #             Game.screen.blit(tank.intro_image, tank...
+    #             tank.intro(x, game.ground)
+    #             game.screen.blit(tank.intro_image, tank...
 
-    # Game.sprites.add(Game.tanks, Game.guns)
-    Game.state = STATE_GAME
+    # game.sprites.add(game.tanks, game.guns)
+    game.state = STATE_GAME

@@ -22,7 +22,7 @@ class Sound:
         self.sounds["powder"].set_volume(0.5)
         self.powder_sound_timer = time.time()
 
-    def play(self, key) -> None:
+    def play(self, key: str) -> None:
         """"""
         sound = self.sounds[key]
         if key != "powder":
